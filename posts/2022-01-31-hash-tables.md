@@ -65,9 +65,17 @@ $$ p(c) = \text{mod}(h(k) + f(c), m) $$
 
 where $$ h $$ is our hash function, $$ k $$ is the key we're trying to place, and $$ c $$ is the number of collisions we've encountered so far. $$ f $$ is the strategy we use to resolve collisions.
 
-- $$ f(c) = c $$ is called _linear probing_. We try buckets $$ 0, 1, 2, \ldots $$ to the right of our initial attempt. Linear probing produces _clusters_, however, because every collision in an unbroken run of full buckets will increase its length by 1 and the probability that a key hashes to it. So the number of comparisons we expect when resolving a collision is conditional on the number of collisions we've encountered so far.
-- $$ f(c) = c^2 $$ is called _quadratic probing_. There's a clever proof from _Weiss_ (Theorem 5.1) that says that, "If quadratic probing is used, and the table size is prime, then a new element can always be inserted if the table is at least half empty." Quadratic probing tries to reduce the clustering that affects linear probing, but Weiss said something about _secondary clustering_ being concern. Keys that hash to the same bucket will try to resolve a collision using the same quadratic function, and this repeated checking is overhead.
-- $$ f(c) = c \cdot h_2(k) $$ is called _double hashing_. $$ h_2(k) = p - \text{mod}(k, p) $$ where $$ p < m $$ and $$ p $$ is prime. $$ h_2(k) \in [1, p] $$ by design, because evaluating to zero would create an infinite loop. It's important that $$ p $$ is not a multiple of $$ m $$ because this allows only a fixed number of opportunities to place the key. Similarly, it's important that $$ [2, p) $$ is not a multiple of $$ m $$, so usually $$ m $$ is taken to be prime. This technique eliminates secondary clustering by making the resolution strategy a function of both the encountered collisions and the key.
+$$ f(c) = c $$
+
+is called _linear probing_. We try buckets $$ 0, 1, 2, \ldots $$ to the right of our initial attempt. Linear probing produces _clusters_, however, because every collision in an unbroken run of full buckets will increase its length by 1 and the probability that a key hashes to it. So the number of comparisons we expect when resolving a collision is conditional on the number of collisions we've encountered so far.
+
+$$ f(c) = c^2 $$
+
+is called _quadratic probing_. There's a clever proof from _Weiss_ (Theorem 5.1) that says that, "If quadratic probing is used, and the table size is prime, then a new element can always be inserted if the table is at least half empty." Quadratic probing tries to reduce the clustering that affects linear probing, but Weiss said something about _secondary clustering_ being concern. Keys that hash to the same bucket will try to resolve a collision using the same quadratic function, and this repeated checking is overhead.
+
+$$ f(c) = c \cdot h_2(k) $$
+
+is called _double hashing_. $$ h_2(k) = p - \text{mod}(k, p) $$ where $$ p < m $$ and $$ p $$ is prime. $$ h_2(k) \in [1, p] $$ by design, because evaluating to zero would create an infinite loop. It's important that $$ p $$ is not a multiple of $$ m $$ because this allows only a fixed number of opportunities to place the key. Similarly, it's important that $$ [2, p) $$ is not a multiple of $$ m $$, so usually $$ m $$ is taken to be prime. This technique eliminates secondary clustering by making the resolution strategy a function of both the encountered collisions and the key.
 
 ### Perfect hashing and universal hash functions
 
