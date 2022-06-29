@@ -8,6 +8,8 @@ const pluginRss = require("@11ty/eleventy-plugin-rss");
 const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const pluginNavigation = require("@11ty/eleventy-navigation");
 
+const texmath = require("markdown-it-texmath");
+
 module.exports = function(eleventyConfig) {
   // Copy the `img` and `css` folders to the output
   eleventyConfig.addPassthroughCopy("img");
@@ -73,6 +75,9 @@ module.exports = function(eleventyConfig) {
       level: [1,2,3,4],
     }),
     slugify: eleventyConfig.getFilter("slug")
+  }).use(texmath, {
+    engine: require("katex"),
+    delimiters: "kramdown",
   });
   eleventyConfig.setLibrary("md", markdownLibrary);
 
