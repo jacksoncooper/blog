@@ -6,6 +6,7 @@
   --navy: #17050F;
   --blue: #082840;
   --white: #fff;
+  --lavender: #B298DC;
 }
 
 /* Global stylesheet */
@@ -14,7 +15,12 @@
 }
 
 .katex-display {
-  overflow: auto hidden
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.home > a[href='/'][href='/'] {
+  color: var(--lavender);
 }
 
 html,
@@ -24,7 +30,7 @@ body {
   font-family: Fira Sans, -apple-system, system-ui, sans-serif;
   color: var(--darkgray);
   background-color: var(--white);
-  max-width: 37.5em;
+  max-width: 39em;
   margin: auto;
 }
 p:last-child {
@@ -33,7 +39,7 @@ p:last-child {
 p,
 .tmpl-post li,
 img {
-  max-width: 37.5em; /* 600px /16 */
+  /* max-width: 37.5em; /* 600px /16 */
 }
 p,
 .tmpl-post li {

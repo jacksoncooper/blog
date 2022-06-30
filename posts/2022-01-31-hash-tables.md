@@ -71,7 +71,11 @@ is called _linear probing_. We try buckets $$ 0, 1, 2, \ldots $$ to the right of
 
 $$ f(c) = c^2 $$
 
-is called _quadratic probing_. There's a clever proof from _Weiss_ (Theorem 5.1) that says that, "If quadratic probing is used, and the table size is prime, then a new element can always be inserted if the table is at least half empty." Quadratic probing tries to reduce the clustering that affects linear probing, but Weiss said something about _secondary clustering_ being concern. Keys that hash to the same bucket will try to resolve a collision using the same quadratic function, and this repeated checking is overhead.
+is called _quadratic probing_. There's a clever proof from _Weiss_ (Theorem 5.1) that says
+
+> If quadratic probing is used, and the table size is prime, then a new element can always be inserted if the table is at least half empty.
+
+Quadratic probing tries to reduce the clustering that affects linear probing, but Weiss said something about _secondary clustering_ being concern. Keys that hash to the same bucket will try to resolve a collision using the same quadratic function, and this repeated checking is overhead.
 
 $$ f(c) = c \cdot h_2(k) $$
 
