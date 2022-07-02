@@ -19,7 +19,7 @@
   overflow-y: hidden;
 }
 
-.home > a[href='/'][href='/'] {
+.home > a[href='/'] {
   color: var(--lavender);
 }
 
