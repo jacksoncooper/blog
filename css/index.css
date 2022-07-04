@@ -30,7 +30,7 @@ body {
   font-family: Fira Sans, -apple-system, system-ui, sans-serif;
   color: var(--darkgray);
   background-color: var(--white);
-  max-width: 39em;
+  max-width: 37.5em;
   margin: auto;
 }
 p:last-child {
@@ -98,7 +98,7 @@ pre {
   background-color: #f6f6f6;
 }
 code {
-  word-break: break-all;
+  /* word-break: break-all; */
 }
 
 /* Header */
