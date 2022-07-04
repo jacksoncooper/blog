@@ -65,16 +65,15 @@ module.exports = function(eleventyConfig) {
   // Customize Markdown library and settings:
   let markdownLibrary = markdownIt({
     html: true,
-    breaks: true,
     linkify: true
   }).use(markdownItAnchor, {
     permalink: markdownItAnchor.permalink.ariaHidden({
       placement: "after",
       class: "direct-link",
-      symbol: "#",
-      level: [1,2,3,4],
+      symbol: "#"
     }),
-    slugify: eleventyConfig.getFilter("slug")
+    level: [1,2,3,4],
+    slugify: eleventyConfig.getFilter("slugify")
   }).use(texmath, {
     engine: require("katex"),
     delimiters: "kramdown",

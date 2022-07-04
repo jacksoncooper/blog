@@ -57,3 +57,4 @@ As far as I know, there's no way to obtain a [generator](https://developer.mozil
 
 ### Attempt 2: Be functional
 
+TODO.
