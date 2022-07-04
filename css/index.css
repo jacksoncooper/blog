@@ -26,10 +26,6 @@
   overflow-y: hidden;
 }
 
-.home > a[href='/']:any-link {
-  color: var(--lavender);
-}
-
 html,
 body {
   padding: 0;
@@ -118,11 +114,16 @@ code {
   margin: 1rem 0; /* 16px /16 */
   font-size: 1em; /* 16px /16 */
 }
-.home :link:not(:hover) {
-  text-decoration: none;
-}
 
 /* Nav */
+.home a:any-link {
+  color: var(--lavender);
+  text-decoration: none;
+}
+.nav a:any-link {
+  color: var(--text-color-link);
+  text-decoration: none;
+}
 .nav {
   padding: 0;
   list-style: none;
@@ -133,11 +134,7 @@ code {
   display: inline-block;
   margin-right: 1em;
 }
-.nav-item a[href]:not(:hover) {
-  text-decoration: none;
-}
 .nav-item-active {
-  font-weight: 700;
   text-decoration: underline;
 }
 
@@ -180,9 +177,7 @@ code {
 }
 .tmpl-home .postlist-link {
   font-size: 1.1875em; /* 19px /16 */
-  font-weight: 700;
 }
-
 
 /* Tags */
 .post-tag {
