@@ -7,6 +7,7 @@
   --color-gray-90: #333;
 
   --background-color: #fff;
+  --inline-code-background-color: rgba(178, 152, 220, 0.2);
 
   --text-color: var(--color-gray-90);
   --text-color-link: var(--color-gray-90);
@@ -104,6 +105,7 @@ pre {
   background-color: #f6f6f6;
 }
 code {
+  background-color: var(--inline-code-background-color);
   /* word-break: break-all; */
 }
 

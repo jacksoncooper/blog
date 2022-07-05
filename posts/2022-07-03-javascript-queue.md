@@ -8,23 +8,24 @@ JavaScript is adorable. It's got abusable C-style syntax like [the comma operato
 
 That's okay, let's write our own.
 
-### Attempt 1: Just use objects
+## Attempt 1: Just use objects
 
 To keep the weird syntax from TypeScript simple, our queue will hold strings.
 
 ```ts
 type Queue = { [property: symbol]: Item };
+
 type Item = string;
 
 const queue = {
-    enqueue: function(this: Queue, value: Item): void {
-        this[Symbol()] = value;
+    enqueue: function(this: Queue, item: Item): void {
+        this[Symbol()] = item;
     },
 
     dequeue: function(this: Queue): Item | null {
-        const values = Object.getOwnPropertySymbols(this);
-        if (values.length > 0) {
-            const property = values[0], oldest = this[property];
+        const item = Object.getOwnPropertySymbols(this);
+        if (item.length > 0) {
+            const property = item[0], oldest = this[property];
             delete this[property];
             return oldest;
         }
@@ -55,6 +56,77 @@ This call does not take time or space proportional to a constant. It must enumer
 
 As far as I know, there's no way to obtain a [generator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). `getOwnPropertySymbols` eagerly marshals all the items in our queue.
 
-### Attempt 2: Be functional
+## Attempt 2: Be functional
 
-TODO.
+We take this type from Haskell
+
+```haskell
+data List = Node Item List | Null
+type Item = String
+```
+
+used like
+
+```haskell
+things = Node "string" (Node "button" (Node "shell" Null))
+```
+
+and translate it to TypeScript. Type definitions cannot recursive, but they can be mutually recursive apparently.
+
+```ts
+type List = Node | null;
+type Node = { item: Item, next: List };
+
+type Item = string;
+```
+
+We rely on the invariant that if one of the node references `oldest` or `newest` is `null`, then they are both `null`. We have to be kind of careful with our type narrowing of these references to avoid asserting to the compiler that they're not null (`!`) when accessing their `next` property.
+
+I always struggle with remembering which end of the queue should be the `oldest` reference and which should be the `newest`. The key is that the `oldest` reference must be able to locate the next oldest item after a `dequeue` operation, and if it points to the end of the list it will be unable to swim upstream against the links.
+
+This one does perform operations in constant time like we expect from a queue, and is probably the easiest to deploy in an interview if you're asked to implement your queue API or if you're doing an online assessment. Although you probably shouldn't be interviewing in JavaScript when you can just manifest a `dequeue` from the Python Standard Library.
+
+Your CPU data cache will murmur mean things about you but it will be worth it.
+
+```ts
+class Queue
+{
+    oldest: List = null;
+    newest: List = null;
+
+    enqueue(item: Item): void {
+        const newest = { item, next: null };
+
+        // The list is empty.
+        if (this.newest === null) {
+            this.oldest = this.newest = newest;
+            return;
+        }
+
+        this.newest.next = newest;
+        this.newest = newest;
+    }
+
+    dequeue(): Item | null {
+        // The list is empty.
+        if (this.oldest === null) {
+            return null;
+        }
+
+        const oldest = this.oldest.item;
+
+        // The list has a single item.
+        if (this.oldest === this.newest) {
+            this.oldest = this.newest = null;
+            return oldest;
+        }
+
+        this.oldest = this.oldest.next;
+        return oldest;
+    }
+}
+```
+
+## Attempt 3: Be random-access
+
+`TODO`.
