@@ -127,6 +127,46 @@ class Queue
 }
 ```
 
+Although we have types for crying out loud. We know that `oldest` and `newest` can't be `null` at the same time, but the types are decoupled. That's error-prone. We can walk through our old implementation and let the compiler guide us.
+
+```ts
+type State = 'empty' | { oldest: Node, newest: Node };
+
+default class Queue
+{
+    state: State = 'empty';
+
+    enqueue(item: Item): void {
+        const newest = { item, next: null };
+
+        if (this.state === 'empty') {
+            this.state = { oldest: newest, newest };
+            return;
+        }
+
+        this.state.newest.next = newest;
+        this.state.newest = newest;
+    }
+
+    dequeue(): Item | null {
+        if (this.state === 'empty') {
+            return null;
+        }
+
+        const oldest = this.state.oldest.item;
+
+        // The list has a single item.
+        if (this.state.oldest.next === null) {
+            this.state = 'empty';
+            return oldest;
+        }
+
+        this.state.oldest = this.state.oldest.next;
+        return oldest;
+    }
+}
+```
+
 ## Attempt 3: Be random-access
 
 `TODO`.
