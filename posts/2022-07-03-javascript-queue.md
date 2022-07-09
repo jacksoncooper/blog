@@ -71,7 +71,7 @@ used like
 things = Node "string" (Node "button" (Node "shell" Null))
 ```
 
-and translate it to TypeScript. Type definitions cannot recursive, but they can be mutually recursive apparently.
+and translate it to TypeScript. Type definitions cannot be recursive, but they can be mutually recursive apparently.
 
 ```ts
 type List = Node | null;
