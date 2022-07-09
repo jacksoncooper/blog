@@ -127,12 +127,12 @@ class Queue
 }
 ```
 
-Although we have types for crying out loud. We know that `oldest` and `newest` can't be `null` at the same time, but the types are decoupled. That's error-prone. We can walk through our old implementation and let the compiler guide us.
+Although we have types, for crying out loud. We know that `oldest` and `newest` can't be `null` at the same time, but the types are decoupled. That's error-prone. We can walk through our old implementation and let the compiler guide us.
 
 ```ts
 type State = 'empty' | { oldest: Node, newest: Node };
 
-default class Queue
+class Queue
 {
     state: State = 'empty';
 
@@ -169,4 +169,66 @@ default class Queue
 
 ## Attempt 3: Be random-access
 
-`TODO`.
+Below is a queue implementation that uses a circular array, which necessarily has a fixed capacity because it's circular (imagine taking a list and connecting its ends). The `oldest` and `newest` references advance in the same direction around the circle, just like our linked implementation. We just have to be mindful of what happens when the queue gets full.
+
+Below, we ignore `enqueue` operations when we don't have room for the new element. We can also perform a sequential `dequeue` and `enqueue` operation to maintain the `this.capacity` most recent elements, useful for problems like a running average. This is all wonderfully hypothetical though, and I didn't bomb such an interview question last fall.
+
+Besides this small wrinkle, the implementation looks identical to the linked queue.
+
+There's no reason we have to clean up after ourselves by calling `delete`. Because both `oldest` and `newest` advance in the same direction, `newest` will write over the stale value before `oldest` gets to it. I just like being tidy.
+
+```ts
+type State = 'empty' | { oldest: number, newest: number };
+
+type Item = string;
+
+class Queue
+{
+    capacity: number;
+    state: State = 'empty';
+    items: Item[] = [];
+
+    constructor(capacity: number) {
+        this.capacity = capacity;
+    }
+
+    enqueue(item: Item): void {
+        if (this.state === 'empty') {
+            this.state = { oldest: 0, newest: 0 };
+            this.items[0] = item;
+            return;
+        }
+
+        // The list is full.
+        if (this.advance(this.state.newest) === this.state.oldest) {
+            return;
+        }
+
+        this.state.newest = this.advance(this.state.newest);
+        this.items[this.state.newest] = item;
+    }
+
+    dequeue(): Item | null {
+        if (this.state === 'empty') {
+            return null;
+        }
+
+        const oldest = this.items[this.state.oldest];
+        delete this.items[this.state.oldest];
+
+        // The list has a single item.
+        if (this.state.oldest === this.state.newest) {
+            this.state = 'empty';
+            return oldest;
+        }
+
+        this.state.oldest = this.advance(this.state.oldest);
+        return oldest;
+
+    }
+
+    private advance(index: number): number {
+        return (index + 1) % this.capacity;
+    }
+}
+```
