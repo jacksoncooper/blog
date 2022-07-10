@@ -34,8 +34,8 @@ body {
   font-family: var(--font-family);
   color: var(--text-color);
   background-color: var(--background-color);
-  max-width: 37.5em;
   margin: auto;
+  max-width: 50em;
 }
 
 p:last-child {
@@ -44,7 +44,7 @@ p:last-child {
 p,
 .tmpl-post li,
 img {
-  /* max-width: 37.5em; /* 600px /16 */
+  max-width: 37.5em; /* 600px /16 */
 }
 p,
 .tmpl-post li {
@@ -87,7 +87,7 @@ code {
   line-height: 1.5;
 }
 pre {
-  font-size: 0.8em;
+  font-size: 0.875em;
   line-height: 1.375;
   direction: ltr;
   text-align: left;
