@@ -167,6 +167,36 @@ class Queue
 }
 ```
 
+TypeScript often looks very removed from JavaScript, but the compiled code is identical.
+
+```ts
+class Queue {
+    state = 'empty';
+    enqueue(item) {
+        const newest = { item, next: null };
+        if (this.state === 'empty') {
+            this.state = { oldest: newest, newest };
+            return;
+        }
+        this.state.newest.next = newest;
+        this.state.newest = newest;
+    }
+    dequeue() {
+        if (this.state === 'empty') {
+            return null;
+        }
+        const oldest = this.state.oldest.item;
+        // The list has a single item.
+        if (this.state.oldest.next === null) {
+            this.state = 'empty';
+            return oldest;
+        }
+        this.state.oldest = this.state.oldest.next;
+        return oldest;
+    }
+}
+```
+
 ## Attempt 3: Be random-access
 
 Below is a queue implementation that uses a circular array, which necessarily has a fixed capacity because it's circular (imagine taking a list and connecting its ends). The `oldest` and `newest` references advance in the same direction around the circle, just like our linked implementation. We just have to be mindful of what happens when the queue gets full.
@@ -176,6 +206,8 @@ Below, we ignore `enqueue` operations when we don't have room for the new elemen
 Besides this small wrinkle, the implementation looks identical to the linked queue.
 
 There's no reason we have to clean up after ourselves by calling `delete`. Because both `oldest` and `newest` advance in the same direction, `newest` will write over the stale value before `oldest` gets to it. I just like being tidy.
+
+Resizing can be done in amortized constant time just like a vector.
 
 ```ts
 type State = 'empty' | { oldest: number, newest: number };
