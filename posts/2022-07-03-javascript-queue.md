@@ -167,9 +167,12 @@ class Queue
 }
 ```
 
-TypeScript often looks very removed from JavaScript, but the compiled code is identical.
+TypeScript often looks very removed from JavaScript, but the compiled code is identical. I've
+compiled to CommonJS.
 
 ```ts
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Queue {
     state = 'empty';
     enqueue(item) {
@@ -191,6 +194,50 @@ class Queue {
             this.state = 'empty';
             return oldest;
         }
+        this.state.oldest = this.state.oldest.next;
+        return oldest;
+    }
+}
+exports.default = Queue;
+```
+
+If you're interested in the generic version, it looks like this.
+
+```ts
+type List<T> = Node<T> | null;
+type Node<T> = { item: T, next: List<T> };
+
+type State<T> = 'empty' | { oldest: Node<T>, newest: Node<T> };
+
+export default class Queue<T>
+{
+    state: State<T> = 'empty';
+
+    enqueue(item: T): void {
+        const newest = { item, next: null };
+
+        if (this.state === 'empty') {
+            this.state = { oldest: newest, newest };
+            return;
+        }
+
+        this.state.newest.next = newest;
+        this.state.newest = newest;
+    }
+
+    dequeue(): T | null {
+        if (this.state === 'empty') {
+            return null;
+        }
+
+        const oldest = this.state.oldest.item;
+
+        // The list has a single item.
+        if (this.state.oldest.next === null) {
+            this.state = 'empty';
+            return oldest;
+        }
+
         this.state.oldest = this.state.oldest.next;
         return oldest;
     }
