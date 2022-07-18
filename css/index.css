@@ -35,7 +35,7 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   margin: auto;
-  max-width: 60em;
+  max-width: 50em;
 }
 
 p:last-child {
