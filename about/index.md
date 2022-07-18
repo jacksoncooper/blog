@@ -8,7 +8,7 @@ eleventyNavigation:
   order: 3
 ---
 
-Hello.
+Hello. 💜
 
 My name is Jackson and I'm an undergraduate student studying computer science at [UC Santa Barbara](https://www.ucsb.edu/). I was previously at the [College of Marin](http://www1.marin.edu/) and [UC Irvine](https://uci.edu/).
 

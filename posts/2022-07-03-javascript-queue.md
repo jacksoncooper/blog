@@ -169,7 +169,7 @@ class Queue
 ```
 
 TypeScript often looks very removed from JavaScript, but the compiled code is identical. I've
-compiled to CommonJS.
+compiled to CommonJS (using `export default class` in the module).
 
 ```ts
 "use strict";
@@ -210,7 +210,7 @@ type Node<T> = { item: T, next: List<T> };
 
 type State<T> = 'empty' | { oldest: Node<T>, newest: Node<T> };
 
-export default class Queue<T>
+class Queue<T>
 {
     state: State<T> = 'empty';
 
@@ -309,6 +309,92 @@ class Queue
 
     private advance(index: number): number {
         return (index + 1) % this.capacity;
+    }
+}
+```
+
+## Attempt 4: Oh no what about priority queues
+
+Short answer: 😭
+
+Long answer: Here is a terrible, horrible, no good, very bad binary heap. Don't use this in production, use
+[heapq](https://docs.python.org/3/library/heapq.html).
+
+```ts
+class Heap<T>
+{
+    keys: T[] = new Array(1);
+    lighter: (key: T, other: T) => boolean;
+
+    constructor(lighter: (key: T, other: T) => boolean = (key, other) => key < other) {
+        this.lighter = lighter;
+    }
+
+    enqueue(key: T): void {
+        this.keys.push(key);
+        this.swim(this.keys.length - 1);
+    }
+
+    dequeue(): T | null {
+        if (this.keys.length === 1) {
+            return null;
+        }
+
+        const top = this.keys[1];
+        this.exchange(1, this.keys.length - 1); // What happens when the queue has length 1?
+        this.keys.pop();
+        this.sink(1);
+        return top;
+    }
+
+    swim(child: number): void {
+        let parent = this.parent(child);
+        while (parent && this.lighter(this.keys[child], this.keys[parent])) {
+            this.exchange(child, parent);
+            child = parent, parent = this.parent(parent); // Comma operator abuse.
+        }
+    }
+
+    sink(parent: number): void {
+        let left = this.leftChild(parent), right = this.rightChild(parent);
+
+        // And here we mourn Rust's if expressions. :(
+        let lighterChild: number | null;
+        if (left && right) {
+            lighterChild = this.keys[left] < this.keys[right] ? left : right;
+        } else {
+            lighterChild = left ? left : right;
+        }
+
+        while(lighterChild && this.lighter(this.keys[lighterChild], this.keys[parent])) {
+            this.exchange(parent, lighterChild);
+            parent = lighterChild;
+            left = this.leftChild(parent), right = this.rightChild(parent); // Comma operator abuse.
+        }
+    }
+
+    leftChild(label: number): number | null {
+        return this.walk(label, (label) => 2 * label);
+    }
+
+    rightChild(label: number): number | null {
+        return this.walk(label, (label) => 2 * label + 1);
+    }
+
+    parent(label: number): number | null {
+        return this.walk(label, (label) => Math.floor(label / 2));
+    }
+
+    walk(label: number, where: (label: number) => number) {
+        const child = where(label);
+        if (!(0 < child && child < this.keys.length)) {
+            return null;
+        }
+        return child;
+    }
+
+    exchange(label: number, other: number): void {
+        [this.keys[label], this.keys[other]] = [this.keys[other], this.keys[label]];
     }
 }
 ```
