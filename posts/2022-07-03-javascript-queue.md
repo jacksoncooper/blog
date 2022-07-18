@@ -1,7 +1,8 @@
 ---
-title: Queues in JavaScript
-date: 2022-07-03
 layout: layouts/post.njk
+title: Queues in JavaScript
+date: git Last Modified
+authored: 2022-07-03
 ---
 
 JavaScript is adorable. It's got abusable C-style syntax like [the comma operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comma_Operator) and you can fit the entirety of its inheritance model in your head. JavaScript is also adorable because its standard library is a bit threadbare. It doesn't have queues.

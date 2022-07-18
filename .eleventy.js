@@ -29,8 +29,12 @@ module.exports = function(eleventyConfig) {
   });
 
   // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-date-string
-  eleventyConfig.addFilter('htmlDateString', (dateObj) => {
-    return DateTime.fromJSDate(dateObj, {zone: 'utc'}).toFormat('yyyy-LL-dd');
+  eleventyConfig.addFilter('htmlDateString', (date) => {
+    if (typeof date === 'string') {
+      date = Date.parse(date);
+    }
+
+    return DateTime.fromJSDate(date, {zone: 'utc'}).toFormat('yyyy-LL-dd');
   });
 
   // Get the first `n` elements of a collection.
