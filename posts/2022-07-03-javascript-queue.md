@@ -307,7 +307,7 @@ class Queue
 
     }
 
-    private advance(index: number): number {
+    advance(index: number): number {
         return (index + 1) % this.capacity;
     }
 }
@@ -356,21 +356,26 @@ class Heap<T>
     }
 
     sink(parent: number): void {
+        let lighterChild = this.lighterChild(parent);
+        while(lighterChild && this.lighter(this.keys[lighterChild], this.keys[parent])) {
+            this.exchange(parent, lighterChild);
+            parent = lighterChild, lighterChild = this.lighterChild(parent);
+        }
+    }
+
+    lighterChild(parent: number): number | null
+    {
+        let lighter: number | null;
         let left = this.leftChild(parent), right = this.rightChild(parent);
 
         // And here we mourn Rust's if expressions. :(
-        let lighterChild: number | null;
         if (left && right) {
-            lighterChild = this.keys[left] < this.keys[right] ? left : right;
+            lighter = this.lighter(this.keys[left], this.keys[right]) ? left : right;
         } else {
-            lighterChild = left ? left : right;
+            lighter = left ? left : right;
         }
 
-        while(lighterChild && this.lighter(this.keys[lighterChild], this.keys[parent])) {
-            this.exchange(parent, lighterChild);
-            parent = lighterChild;
-            left = this.leftChild(parent), right = this.rightChild(parent); // Comma operator abuse.
-        }
+        return lighter;
     }
 
     leftChild(label: number): number | null {
@@ -391,6 +396,43 @@ class Heap<T>
             return null;
         }
         return child;
+    }
+
+    exchange(label: number, other: number): void {
+        [this.keys[label], this.keys[other]] = [this.keys[other], this.keys[label]];
+    }
+}
+```
+
+If you just need to get your program to compile, you can fake it by using a heap that eagerly orders its items in linear time, just like arranging a hand of playing cards. This is insertion sort.
+
+```ts
+class Heap<T>
+{
+    keys: T[] = [];
+    lighter: (key: T, other: T) => boolean;
+
+    constructor(lighter: (key: T, other: T) => boolean = (key, other) => key > other) {
+        this.lighter = lighter;
+    }
+
+    enqueue(key: T): void {
+        this.keys.push(key);
+        const n = this.keys.length;
+        for (let i = n - 1; i > 0 && this.lighter(this.keys[i], this.keys[i - 1]); --i) {
+            this.exchange(i, i - 1);
+        }
+    }
+
+    dequeue(): T | null {
+        // If you try to bind the return value of pop, TypeScript will require a non-null assertion.
+        const n = this.keys.length;
+        if (n > 0) {
+            const last = this.keys[n - 1];
+            this.keys.pop();
+            return last;
+        }
+        return null;
     }
 
     exchange(label: number, other: number): void {
