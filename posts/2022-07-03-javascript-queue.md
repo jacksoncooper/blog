@@ -412,14 +412,14 @@ class Heap<T>
     keys: T[] = [];
     lighter: (key: T, other: T) => boolean;
 
-    constructor(lighter: (key: T, other: T) => boolean = (key, other) => key > other) {
+    constructor(lighter: (key: T, other: T) => boolean = (key, other) => key < other) {
         this.lighter = lighter;
     }
 
     enqueue(key: T): void {
         this.keys.push(key);
         const n = this.keys.length;
-        for (let i = n - 1; i > 0 && this.lighter(this.keys[i], this.keys[i - 1]); --i) {
+        for (let i = n - 1; i > 0 && !this.lighter(this.keys[i], this.keys[i - 1]); --i) {
             this.exchange(i, i - 1);
         }
     }
