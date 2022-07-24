@@ -419,7 +419,7 @@ class Heap<T>
     enqueue(key: T): void {
         this.keys.push(key);
         const n = this.keys.length;
-        for (let i = n - 1; i > 0 && !this.lighter(this.keys[i], this.keys[i - 1]); --i) {
+        for (let i = n - 1; i > 0 && this.lighter(this.keys[i - 1], this.keys[i]); --i) {
             this.exchange(i, i - 1);
         }
     }
@@ -437,6 +437,23 @@ class Heap<T>
 
     exchange(label: number, other: number): void {
         [this.keys[label], this.keys[other]] = [this.keys[other], this.keys[label]];
+    }
+
+    static from<T>(lighter: (key: T, other: T) => boolean, keys: T[]): Heap<T> {
+        const heap = new Heap<T>();
+
+        const compare = (key: T, other: T): number => {
+            if (lighter(key, other)) return 1;
+            else if (lighter(other, key)) return -1;
+            else return 0;
+        }
+
+        heap.keys = keys;
+        heap.lighter = lighter;
+
+        heap.keys.sort(compare);
+
+        return heap;
     }
 }
 ```
